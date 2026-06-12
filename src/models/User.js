@@ -32,7 +32,7 @@ export const User = sequelize.define(
       unique: { msg: "Email already exists" },
       validate: {
         notEmpty: { msg: "Email is required" },
-        isEmail: { msg: "Please enter a valid email address" }
+        isEmail: { msg: "Please enter a valid email address" },
       },
     },
     password: {
@@ -42,9 +42,9 @@ export const User = sequelize.define(
         notEmpty: {
           msg: "Password is required",
         },
-        len: { 
-          args: [8, 100], 
-          msg: "Password must be at least 8 characters"
+        len: {
+          args: [8, 100],
+          msg: "Password must be at least 8 characters",
         },
       },
     },
@@ -65,19 +65,19 @@ export const User = sequelize.define(
       attributes: { exclude: ["refreshToken", "password"] },
     },
     scopes: {
-      withRefreshToken: { attributes: { include: ["refreshToken"] } },
+      auth: { attributes: { include: ["password", "refreshToken"] } },
     },
     hooks: {
       beforeCreate: async (user) => {
         if (user.password) {
-          const salt = await bcrypt.genSaltSync(10);
-          user.password = await bcrypt.hashSync(user.password, salt);
+          const salt = await bcrypt.genSalt(10);
+          user.password = await bcrypt.hash(user.password, salt);
         }
       },
       beforeUpdate: async (user) => {
         if (user.changed("password")) {
-          const salt = await bcrypt.genSaltSync(10);
-          user.password = await bcrypt.hashSync(user.password, salt);
+          const salt = await bcrypt.genSalt(10);
+          user.password = await bcrypt.hash(user.password, salt);
         }
       },
     },
