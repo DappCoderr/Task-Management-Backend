@@ -1,6 +1,5 @@
-import { sequelize } from "../config/database";
+import { sequelize } from "../config/database.js";
 import { DataTypes } from "sequelize";
-import bcrypt from "bcrypt";
 
 export const Task = sequelize.define(
   "Task",
@@ -40,19 +39,5 @@ export const Task = sequelize.define(
   {
     tableName: "tasks",
     timestamps: true,
-    hooks: {
-      beforeCreate: async (user) => {
-        if (user.password) {
-          const salt = await bcrypt.genSaltSync(10);
-          user.password = await bcrypt.hashSync(user.password, salt);
-        }
-      },
-      beforeUpdate: async (user) => {
-        if (user.changed("password")) {
-          const salt = await bcrypt.genSaltSync(10);
-          user.password = await bcrypt.hashSync(user.password, salt);
-        }
-      },
-    },
   },
 );

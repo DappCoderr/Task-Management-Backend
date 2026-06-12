@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
-import { sequelize } from "../config/database";
+import { sequelize } from "../config/database.js";
+import bcrypt from "bcrypt";
 
 export const User = sequelize.define(
   "User",
@@ -27,9 +28,33 @@ export const User = sequelize.define(
       defaultValue: "USER",
       allowNull: false,
     },
+    refreshToken: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
   },
   {
     tableName: "users",
     timestamps: true,
+    defaultScope: {
+      attributes: { exclude: ["refreshToken", "password"] },
+    },
+    scopes: {
+      withRefreshToken: { attributes: { include: ["refreshToken"] } },
+    },
+    hooks: {
+      beforeCreate: async (user) => {
+        if (user.password) {
+          const salt = await bcrypt.genSaltSync(10);
+          user.password = await bcrypt.hashSync(user.password, salt);
+        }
+      },
+      beforeUpdate: async (user) => {
+        if (user.changed("password")) {
+          const salt = await bcrypt.genSaltSync(10);
+          user.password = await bcrypt.hashSync(user.password, salt);
+        }
+      },
+    },
   },
 );
