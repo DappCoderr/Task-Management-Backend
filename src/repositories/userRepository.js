@@ -10,7 +10,7 @@ const userRepository = {
   },
 
   findUserByEmail: async (email) => {
-    return User.findOne({ where: { email } });
+    return User.scope("auth").findOne({ where: { email } });
   },
 
   findAllUsers: async (options = {}) => {
