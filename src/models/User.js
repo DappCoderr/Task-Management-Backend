@@ -10,18 +10,43 @@ export const User = sequelize.define(
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
-    name: {
-      type: DataTypes.STRING,
+    username: {
+      type: DataTypes.STRING(30),
       allowNull: false,
+      unique: { msg: "Username already exists" },
+      validate: {
+        notEmpty: { msg: "Username is required" },
+        len: {
+          args: [3, 30],
+          msg: "Username must be between 3 and 30 characters",
+        },
+        is: {
+          args: /^[a-zA-Z0-9_]+$/,
+          msg: "Username can only contain letters, numbers and underscore",
+        },
+      },
     },
     email: {
       type: DataTypes.STRING,
-      unique: true,
       allowNull: false,
+      unique: { msg: "Email already exists" },
+      validate: {
+        notEmpty: { msg: "Email is required" },
+        isEmail: { msg: "Please enter a valid email address" }
+      },
     },
     password: {
       type: DataTypes.STRING,
       allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: "Password is required",
+        },
+        len: { 
+          args: [8, 100], 
+          msg: "Password must be at least 8 characters"
+        },
+      },
     },
     role: {
       type: DataTypes.ENUM("USER", "ADMIN"),
