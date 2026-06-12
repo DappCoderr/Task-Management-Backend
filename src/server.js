@@ -1,8 +1,18 @@
-import express from 'express'
-import { PORT } from './config/serverConfig.js';
-import { connectDB } from './config/database.js';
+import express from "express";
+import cookieParser from "cookie-parser";
+import { PORT } from "./config/serverConfig.js";
+import { connectDB } from "./config/database.js";
+import { errorHandler } from "./middlewares/errorHandler.js";
+import v1Routes from "./routes/v1/index.js";
+import { sequelize } from "./config/database.js";
 
 const app = express();
+
+app.use(express.json());
+app.use(cookieParser());
+app.use(express.urlencoded({ extended: true }));
+// app.use(errorHandler);
+app.use("/api/v1", v1Routes);
 
 app.get("/health", (req, res) => {
   res.status(200).json({
@@ -14,6 +24,7 @@ app.get("/health", (req, res) => {
 async function startServer() {
   try {
     await connectDB();
+    await sequelize.sync({ alter: true });
     app.listen(PORT, () => {
       console.log(`Server running on PORT: ${PORT}`);
     });
@@ -22,6 +33,6 @@ async function startServer() {
     console.error(error);
     process.exit(1);
   }
-};
+}
 
 startServer();
