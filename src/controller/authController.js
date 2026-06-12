@@ -11,15 +11,26 @@ import {
 } from "../utils/cookieOptions.js";
 import bcrypt from "bcrypt";
 import StatusCodes from "http-status-codes";
+import {
+  internalErrorResponse,
+  successResponse,
+  customErrorResponse,
+} from "../utils/common/responseObject.js";
 
 export const registerAuth = async (req, res, next) => {
   try {
     const user = await register(req.body);
     res
       .status(StatusCodes.CREATED)
-      .json(user);
+      .json(successResponse(user, "User created successfully"));
   } catch (error) {
-    next(error);
+    console.log("User registerAuth controller error", error);
+    if (error.statusCode) {
+      return res.status(error.statusCode).json(customErrorResponse(error));
+    }
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json(internalErrorResponse(error));
   }
 };
 

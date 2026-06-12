@@ -1,11 +1,25 @@
 import userRepository from "../repositories/userRepository.js";
+import ValidationError from "../utils/errors/validationError.js";
+import { Sequelize } from "sequelize";
 
-export const register = async ({ name, email, password, role }) => {
-  const existing = await userRepository.findUserByEmail(email);
-  if (existing) {
-    throw new Error("Email already in use");
+export const register = async (data) => {
+  try {
+    const newUser = await userRepository.createUser(data);
+    return newUser;
+  } catch (error) {
+    console.error("User register service error:", error);
+    if (error.name === "SequelizeValidationError") {
+      throw new ValidationError({ error: error.errors }, error.message);
+    }
+    if (error instanceof Sequelize.UniqueConstraintError) {
+      throw new ValidationError(
+        {
+          error: ["A user with same email or username already exists"],
+        },
+        "A user with same email or username already exists",
+      );
+    }
   }
-  return userRepository.createUser({ name, email, password, role });
 };
 
 export const getProfile = async (userId) => {
