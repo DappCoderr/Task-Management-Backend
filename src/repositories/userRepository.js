@@ -1,4 +1,4 @@
-import { User } from "../models/User";
+import { User } from "../models/User.js";
 
 const userRepository = {
   createUser: async (data) => {
@@ -11,6 +11,13 @@ const userRepository = {
 
   findUserByEmail: async (email) => {
     return User.findOne({ where: { email } });
+  },
+
+  findAllUsers: async (options = {}) => {
+    return User.findAll({
+      attributes: { exclude: ["password", "refreshToken"] },
+      ...options,
+    });
   },
 
   updateUser: async (id, data) => {
