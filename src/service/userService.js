@@ -162,25 +162,52 @@ export const logoutService = async (refreshTokenFromCookie) => {
   }
 };
 
-export const getProfile = async (userId) => {
-  const user = await userRepository.findUserById(userId);
-  if (!user) throw new Error("User not found");
-  const { password, refreshToken, ...profile } = user.toJSON();
-  return profile;
+export const getProfileService = async (userId) => {
+  try {
+    const user = await userRepository.findUserById(userId);
+    if (!user) {
+      throw new ClientError({
+        message: "User Not Found",
+        statusCode: StatusCodes.NOT_FOUND,
+      });
+    }
+    return user;
+  } catch (error) {
+    console.log("userservice profile retrieve error", error);
+    throw error;
+  }
 };
 
 export const updateProfile = async (userId, data) => {
-  delete data.role;
-  delete data.id;
-  const user = await userRepository.updateUser(userId, data);
-  if (!user) throw new Error("User not found");
-  return user;
+  try {
+    const user = await userRepository.updateUser(userId, data);
+    if (!user) {
+      throw new ClientError({
+        message: "User Not Found",
+        statusCode: StatusCodes.NOT_FOUND,
+      });
+    }
+    return user;
+  } catch (error) {
+    console.log("userservice update profile error", error);
+    throw error;
+  }
 };
 
 export const deleteAccount = async (userId) => {
-  const success = await userRepository.deleteUser(userId);
-  if (!success) throw new Error("User not found");
-  return { message: "Account deleted" };
+  try {
+    const user = await userRepository.deleteUser(userId);
+    if (!user) {
+      throw new ClientError({
+        message: "User Not Found",
+        statusCode: StatusCodes.NOT_FOUND,
+      });
+    }
+    return { message: "Account deleted" };
+  } catch (error) {
+    console.log("userservice delete account error", error);
+    throw error;
+  }
 };
 
 export const getAllUsers = async (pagination = {}) => {
