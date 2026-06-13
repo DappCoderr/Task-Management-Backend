@@ -1,6 +1,6 @@
 import userRepository from "../repositories/userRepository.js";
 import ValidationError from "../utils/errors/validationError.js";
-import { Sequelize } from "sequelize";
+import { json, Sequelize } from "sequelize";
 import ClientError from "../utils/errors/clientError.js";
 import { StatusCodes } from "http-status-codes";
 import bcrypt from "bcrypt";
@@ -9,6 +9,7 @@ import {
   refreshTokenCookieOptions,
 } from "../utils/cookieOptions.js";
 import * as token from "../utils/jwt.js";
+import jwt from "jsonwebtoken";
 
 export const registerService = async (data) => {
   try {
@@ -59,6 +60,9 @@ export const loginService = async (data) => {
     const hashedRefresh = await bcrypt.hash(refreshToken, 10);
     await userRepository.updateUser(user.id, { refreshToken: hashedRefresh });
 
+    console.log("Logic Service refresh token:", refreshToken);
+    console.log("Logic Service decoded refresh token:", jwt.decode(refreshToken));
+
     return {
       accessToken,
       refreshToken,
@@ -80,19 +84,14 @@ export const refreshService = async (incomingRefreshToken) => {
     if (!incomingRefreshToken) {
       throw new ClientError({
         message: "Refresh token missing",
-        statusCode: StatusCodes.UNAUTHORIZED,
+        statusCode: StatusCodes.NOT_FOUND,
       });
     }
 
     let decoded = token.verifyRefreshToken(incomingRefreshToken);
-    if (!decoded) {
-      throw new ClientError({
-        message: "Invalid refresh token",
-        statusCode: StatusCodes.UNAUTHORIZED,
-      });
-    }
+    console.log("-----userId-------", decoded.sub)
     const userRecord = await userRepository.findUserById(decoded.sub);
-    console.log("---refreshService------: ", userRecord);
+    console.log("-------user record-------", userRecord);
 
     if (!userRecord) {
       throw new ClientError({
@@ -151,6 +150,7 @@ export const logoutService = async (refreshTokenFromCookie) => {
         statusCode: StatusCodes.UNAUTHORIZED,
       });
     }
+    console.log("---Logout service--------", decoded)
     await userRepository.updateUser(decoded.sub, {
       refreshToken: null,
     });

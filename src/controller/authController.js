@@ -61,9 +61,26 @@ export const loginController = async (req, res) => {
 
 export const refreshController = async (req, res) => {
   try {
-    const incomingRefreshToken = req.cookies?.refreshToken;
-    const tokens = await refreshService(incomingRefreshToken);
+    console.log("------------ Refresh Controller -----------");
+    console.log("All cookies:", req.cookies); 
+    console.log("Headers:", req.headers.cookie); 
+    console.log("-------------------------------------")
+    console.log("Headers:", req.headers.cookie?.refreshToken); 
+    console.log("-------------------------------------")
 
+    // const incomingRefreshToken = req.cookies?.refreshToken;
+    // console.log("Extracted refresh token:", incomingRefreshToken ? "PRESENT" : "MISSING");
+    
+    // if (!incomingRefreshToken) {
+    //   return res.status(401).json({ message: "No refresh token cookie found" });
+    // }
+
+    const incomingRefreshToken = req.cookies?.refreshToken;
+    
+    // console.log("Token snippet:", incomingRefreshToken.slice(0, 20) + "...");
+    const tokens = await refreshService(incomingRefreshToken);
+    // const incomingRefreshToken = req.cookies?.refreshToken;
+    // const tokens = await refreshService(incomingRefreshToken);
     res.cookie(
       "accessToken",
       tokens.accessToken,
