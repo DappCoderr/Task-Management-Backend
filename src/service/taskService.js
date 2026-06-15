@@ -3,7 +3,7 @@ import ValidationError from "../utils/errors/validationError.js";
 import NotFoundError from "../utils/errors/notFoundError.js";
 import ForbiddenError from "../utils/errors/forbiddenError.js";
 
-export const createTaskForUser = async ({
+export const createTaskService = async ({
   title,
   description,
   dueDate,
@@ -13,9 +13,22 @@ export const createTaskForUser = async ({
   try {
     if (!title || !description) {
       throw new ValidationError({
-        fields: { input: "Title and description are required" },
-        message: "Title and description are required",
-      });
+        error: { input: "Title and description are required" }},
+        "Title and description are required"
+      );
+    }
+
+    if (dueDate) {
+      const todayDate = new Date();
+      todayDate.setHours(0, 0, 0, 0);
+      const dueDateObj = new Date(dueDate);
+      dueDateObj.setHours(0, 0, 0, 0);
+      if (dueDateObj < todayDate) {
+        throw new ValidationError(
+          { error: { dueDate: "Due date cannot be in the past" } },
+          "Due date must be today or a future date"
+        );
+      }
     }
     return taskRepository.createTask({
       title,
@@ -30,7 +43,7 @@ export const createTaskForUser = async ({
   }
 };
 
-export const getUserTasks = async (userId, statusFilter) => {
+export const getAllTasksService = async (userId, statusFilter) => {
   try {
     const filters = statusFilter ? { status: statusFilter } : {};
     return taskRepository.findTasksByUser(userId, filters);
@@ -40,31 +53,67 @@ export const getUserTasks = async (userId, statusFilter) => {
   }
 };
 
-export const updateTaskStatus = async (taskId, newStatus, userId) => {
+export const getSingleTaskService = async (taskId, userId) => {
   try {
-    const validStatuses = ["TODO", "IN PROGRESS", "COMPLETED"];
-    if (!validStatuses.includes(newStatus)) {
-      throw new ValidationError({
-        fields: {
-          status: `Invalid status. Must be one of: ${validStatuses.join(", ")}`,
-        },
-        message: "Invalid task status",
-      });
-    }
-
     const task = await taskRepository.findTaskById(taskId);
-    if (!task) throw new NotFoundError("Task not found");
-    if (task.userId !== userId)
-      throw new ForbiddenError("You can only update your own tasks");
-
-    return taskRepository.updateTask(taskId, { status: newStatus });
+    if (!task) {
+      throw new NotFoundError("Task not found");
+    }
+    if (task.userId !== userId) {
+      throw new ForbiddenError("You can only view your own tasks");
+    }
+    return task;
   } catch (error) {
-    console.error("Taskservice get task error:", error);
+    console.error("Task service get single task error:", error);
     throw error;
   }
 };
 
-export const deleteUserTask = async (taskId, userId) => {
+export const updateTaskService = async (taskId, updateData, userId) => {
+  try {
+    const existingTask = await taskRepository.findTaskById(taskId);
+
+    if (!existingTask) {
+      throw new NotFoundError("Task not found");
+    }
+
+    if (existingTask.userId !== userId) {
+      throw new ForbiddenError("You can only update your own tasks");
+    }
+
+    const updatedTask = await taskRepository.updateTask(taskId, updateData);
+    return updatedTask;
+  } catch (error) {
+    console.error("Task service update task error:", error);
+    throw error;
+  }
+};
+
+// export const updateTaskStatus = async (taskId, newStatus, userId) => {
+//   try {
+//     const validStatuses = ["TODO", "IN PROGRESS", "COMPLETED"];
+//     if (!validStatuses.includes(newStatus)) {
+//       throw new ValidationError({
+//         fields: {
+//           status: `Invalid status. Must be one of: ${validStatuses.join(", ")}`,
+//         },
+//         message: "Invalid task status",
+//       });
+//     }
+
+//     const task = await taskRepository.findTaskById(taskId);
+//     if (!task) throw new NotFoundError("Task not found");
+//     if (task.userId !== userId)
+//       throw new ForbiddenError("You can only update your own tasks");
+
+//     return taskRepository.updateTask(taskId, { status: newStatus });
+//   } catch (error) {
+//     console.error("Taskservice get task error:", error);
+//     throw error;
+//   }
+// };
+
+export const deleteTaskService = async (taskId, userId) => {
   try {
     const task = await taskRepository.findTaskById(taskId);
     if (!task) throw new NotFoundError("Task not found");
