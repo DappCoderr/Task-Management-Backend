@@ -8,7 +8,7 @@ import {
 
 export const createTaskController = async (req, res) => {
   try {
-    const task = await service.createTaskForUser({
+    const task = await service.createTaskService({
       ...req.body,
       userId: req.user.id,
     });
@@ -26,9 +26,29 @@ export const createTaskController = async (req, res) => {
   }
 };
 
-export const getTasksController = async (req, res) => {
+export const getSingleTasksController = async (req, res) => {
   try {
-    const tasks = await service.getUserTasks(req.user.id, req.query.status);
+    const task = await service.getSingleTaskService(req.params.id, req.user.id);
+    return res
+      .status(StatusCodes.OK)
+      .json(successResponse(task, "Task retrieved successfully"));
+  } catch (error) {
+    console.log("Get single task controller error:", error);
+    if (error.statusCode) {
+      return res.status(error.statusCode).json(customErrorResponse(error));
+    }
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json(internalErrorResponse(error));
+  }
+};
+
+export const getAllTasksController = async (req, res) => {
+  try {
+    const tasks = await service.getAllTasksService(
+      req.user.id,
+      req.query.status,
+    );
     return res
       .status(StatusCodes.OK)
       .json(successResponse(tasks, "Tasks retrieved"));
@@ -43,30 +63,54 @@ export const getTasksController = async (req, res) => {
   }
 };
 
-export const updateTaskStatusController = async (req, res) => {
+export const updateTaskController = async (req, res) => {
   try {
-    const task = await service.updateTaskStatus(
+    const task = await service.updateTaskService(
       req.params.id,
-      req.body.status,
+      req.body,
       req.user.id,
     );
+
     return res
       .status(StatusCodes.OK)
-      .json(successResponse(task, "Task status updated"));
+      .json(successResponse(task, "Task updated successfully"));
   } catch (error) {
-    console.log("Update task status controller error:", error);
+    console.log("Update task controller error:", error);
+
     if (error.statusCode) {
       return res.status(error.statusCode).json(customErrorResponse(error));
     }
+
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json(internalErrorResponse(error));
   }
 };
 
+// export const updateTaskStatusController = async (req, res) => {
+//   try {
+//     const task = await service.updateTaskStatus(
+//       req.params.id,
+//       req.body.status,
+//       req.user.id,
+//     );
+//     return res
+//       .status(StatusCodes.OK)
+//       .json(successResponse(task, "Task status updated"));
+//   } catch (error) {
+//     console.log("Update task status controller error:", error);
+//     if (error.statusCode) {
+//       return res.status(error.statusCode).json(customErrorResponse(error));
+//     }
+//     return res
+//       .status(StatusCodes.INTERNAL_SERVER_ERROR)
+//       .json(internalErrorResponse(error));
+//   }
+// };
+
 export const deleteTaskController = async (req, res) => {
   try {
-    const result = await service.deleteUserTask(req.params.id, req.user.id);
+    const result = await service.deleteTaskService(req.params.id, req.user.id);
     return res
       .status(StatusCodes.OK)
       .json(successResponse(result, "Task deleted"));
