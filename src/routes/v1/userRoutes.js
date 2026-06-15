@@ -9,18 +9,4 @@ router.get("/profile", authenticate, userController.getProfileController);
 router.put("/profile", authenticate, userController.updateProfileController);
 router.delete("/profile", authenticate, userController.deleteAccountController);
 
-// ADMIN route
-router.get(
-  "/",
-  authorize("ADMIN"),
-  authenticate,
-  userController.getAllUsersController,
-);
-router.delete(
-  "/:id",
-  authorize("ADMIN"),
-  authenticate,
-  userController.deleteAnyUserController,
-);
-
 export default router;
