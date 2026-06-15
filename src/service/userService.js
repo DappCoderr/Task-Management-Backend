@@ -199,33 +199,18 @@ export const updateProfile = async (userId, data) => {
   }
 };
 
-// export const deleteAccount = async (userId) => {
-//   try {
-//     const user = await userRepository.deleteUser(userId);
-//     if (!user) {
-//       throw new ClientError({
-//         message: "User Not Found",
-//         statusCode: StatusCodes.NOT_FOUND,
-//       });
-//     }
-//     return { message: "Account deleted" };
-//   } catch (error) {
-//     console.log("userservice delete account error", error);
-//     throw error;
-//   }
-// };
-
-// export const getAllUsers = async (pagination = {}) => {
-//   const { limit = 20, offset = 0 } = pagination;
-//   return userRepository.findAllUsers({ limit, offset });
-// };
-
-// export const deleteAnyUser = async (adminUserId, targetUserId) => {
-//   if (adminUserId === targetUserId) {
-//     throw new Error("You cannot delete your own account via this endpoint");
-//   }
-//   const user = await userRepository.findUserById(targetUserId);
-//   if (!user) throw new Error("User not found");
-//   await userRepository.deleteUser(targetUserId);
-//   return { message: "User deleted successfully" };
-// };
+export const deleteAccount = async (userId) => {
+  try {
+    const user = await userRepository.deleteUser(userId);
+    if (!user) {
+      throw new ClientError({
+        message: "User Not Found",
+        statusCode: StatusCodes.NOT_FOUND,
+      });
+    }
+    return { message: "Account deleted" };
+  } catch (error) {
+    console.log("userservice delete account error", error);
+    throw error;
+  }
+};
