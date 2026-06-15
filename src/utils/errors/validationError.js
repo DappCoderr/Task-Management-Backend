@@ -8,7 +8,7 @@ class ValidationError extends Error {
     const explanation = [];
 
     const errorObj = errorDetails.error || errorDetails.fields || errorDetails;
-    
+
     Object.keys(errorObj).forEach((key) => {
       explanation.push(errorObj[key]);
     });
