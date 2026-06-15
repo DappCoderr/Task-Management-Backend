@@ -93,9 +93,7 @@ const taskRepository = {
     });
 
     const completionRate =
-      totalTasks > 0
-        ? ((completedTasks / totalTasks) * 100).toFixed(2)
-        : 0;
+      totalTasks > 0 ? ((completedTasks / totalTasks) * 100).toFixed(2) : 0;
 
     return {
       total: totalTasks,

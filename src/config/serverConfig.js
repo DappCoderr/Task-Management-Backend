@@ -7,4 +7,4 @@ export const PORT = process.env.PORT || 5000;
 export const NODE_ENV = process.env.NODE_ENV || "development";
 export const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
 export const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
-export const CROS_PATH = process.env.CROS_PATH;
+export const CORS_ORIGIN = process.env.CORS_ORIGIN;

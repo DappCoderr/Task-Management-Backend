@@ -9,7 +9,7 @@ export const getAdminDashboard = async () => {
   try {
     const totalUsers = await userRepository.countUsers();
     const totalTasks = await taskRepository.countTasks();
-    const allUser = await userRepository.findAllUsers()
+    const allUser = await userRepository.findAllUsers();
     // const tasksByStatus = await taskRepository.getTasksByStatus();
     // const recentUsers = await userRepository.findRecentUsers(5);
     // const recentTasks = await taskRepository.findRecentTasks(5);
@@ -19,7 +19,7 @@ export const getAdminDashboard = async () => {
         totalUsers,
         totalTasks,
       },
-      allUser
+      allUser,
     };
   } catch (error) {
     console.error("Admin service get dashboard error:", error);

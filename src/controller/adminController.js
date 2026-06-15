@@ -1,5 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import * as adminService from "../service/adminService.js"
+import * as adminService from "../service/adminService.js";
 import {
   successResponse,
   customErrorResponse,
