@@ -9,6 +9,10 @@ const taskRepository = {
     return Task.findByPk(id);
   },
 
+  findTaskByIdAndUser: async (id, userId) => {
+    return Task.findOne({ where: { id, userId } });
+  },
+
   findTasksByUser: async (userId, filters = {}) => {
     const where = { userId, ...filters };
     return Task.findAll({ where });
