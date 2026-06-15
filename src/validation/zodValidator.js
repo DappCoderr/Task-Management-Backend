@@ -10,15 +10,14 @@ export const validate = (model) => {
     } catch (error) {
       if (error instanceof ZodError) {
         const explanation = error.issues.map(
-          (issue) =>
-            `${issue.path.join(".")} ${issue.message}`
+          (issue) => `${issue.path.join(".")} ${issue.message}`,
         );
 
         return res.status(StatusCodes.BAD_REQUEST).json(
           customErrorResponse({
             message: "Validation Error",
             explanation,
-          })
+          }),
         );
       }
 
@@ -26,7 +25,7 @@ export const validate = (model) => {
         customErrorResponse({
           message: error.message,
           explanation: [],
-        })
+        }),
       );
     }
   };
