@@ -9,6 +9,10 @@ const userRepository = {
     return User.findByPk(id);
   },
 
+  countUsers: async() =>{
+    return User.count();
+  },
+
   findUserByEmail: async (email) => {
     return User.scope("auth").findOne({ where: { email } });
   },
