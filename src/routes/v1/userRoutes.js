@@ -1,12 +1,18 @@
 import { Router } from "express";
-import { authenticate, authorize } from "../../middlewares/authMiddleware.js";
+import { authenticate } from "../../middlewares/authMiddleware.js";
 import * as userController from "../../controller/userController.js";
+import { validate } from "../../validation/zodValidator.js";
+import { updateProfileValidation } from "../../validation/userModel.js";
 
 const router = Router();
 
-// USER route
 router.get("/profile", authenticate, userController.getProfileController);
-router.put("/profile", authenticate, userController.updateProfileController);
+router.put(
+  "/profile",
+  authenticate,
+  validate(updateProfileValidation),
+  userController.updateProfileController,
+);
 router.delete("/profile", authenticate, userController.deleteAccountController);
 
 export default router;

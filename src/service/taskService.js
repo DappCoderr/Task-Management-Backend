@@ -1,5 +1,4 @@
 import taskRepository from "../repositories/taskRepository.js";
-import ValidationError from "../utils/errors/validationError.js";
 import NotFoundError from "../utils/errors/notFoundError.js";
 import ForbiddenError from "../utils/errors/forbiddenError.js";
 
@@ -11,27 +10,6 @@ export const createTaskService = async ({
   userId,
 }) => {
   try {
-    if (!title || !description) {
-      throw new ValidationError(
-        {
-          error: { input: "Title and description are required" },
-        },
-        "Title and description are required",
-      );
-    }
-
-    if (dueDate) {
-      const todayDate = new Date();
-      todayDate.setHours(0, 0, 0, 0);
-      const dueDateObj = new Date(dueDate);
-      dueDateObj.setHours(0, 0, 0, 0);
-      if (dueDateObj < todayDate) {
-        throw new ValidationError(
-          { error: { dueDate: "Due date cannot be in the past" } },
-          "Due date must be today or a future date",
-        );
-      }
-    }
     return taskRepository.createTask({
       title,
       description,
