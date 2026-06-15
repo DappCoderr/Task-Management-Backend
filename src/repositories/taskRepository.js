@@ -1,4 +1,5 @@
 import { Task } from "../models/Task.js";
+import { User } from "../models/User.js";
 import { Op, Sequelize } from "sequelize";
 
 const taskRepository = {
