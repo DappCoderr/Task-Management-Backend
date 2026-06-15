@@ -12,9 +12,11 @@ export const createTaskService = async ({
 }) => {
   try {
     if (!title || !description) {
-      throw new ValidationError({
-        error: { input: "Title and description are required" }},
-        "Title and description are required"
+      throw new ValidationError(
+        {
+          error: { input: "Title and description are required" },
+        },
+        "Title and description are required",
       );
     }
 
@@ -26,7 +28,7 @@ export const createTaskService = async ({
       if (dueDateObj < todayDate) {
         throw new ValidationError(
           { error: { dueDate: "Due date cannot be in the past" } },
-          "Due date must be today or a future date"
+          "Due date must be today or a future date",
         );
       }
     }
@@ -46,7 +48,7 @@ export const createTaskService = async ({
 export const getAllTasksService = async (userId, statusFilter) => {
   try {
     const filters = statusFilter ? { status: statusFilter } : {};
-    return taskRepository.findTasksByUser(userId, filters);
+    return taskRepository.findTasksByUserId(userId, filters);
   } catch (error) {
     console.error("Taskservice get task error:", error);
     throw error;
