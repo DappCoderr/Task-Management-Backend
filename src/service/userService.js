@@ -13,6 +13,8 @@ import jwt from "jsonwebtoken";
 
 export const registerService = async (data) => {
   try {
+    const totalUser = await userRepository.countUsers();
+    totalUser > 0 ? data.role = "USER" : data.role = "ADMIN";
     const newUser = await userRepository.createUser(data);
     return newUser;
   } catch (error) {
@@ -61,7 +63,10 @@ export const loginService = async (data) => {
     await userRepository.updateUser(user.id, { refreshToken: hashedRefresh });
 
     console.log("Logic Service refresh token:", refreshToken);
-    console.log("Logic Service decoded refresh token:", jwt.decode(refreshToken));
+    console.log(
+      "Logic Service decoded refresh token:",
+      jwt.decode(refreshToken),
+    );
 
     return {
       accessToken,
@@ -89,7 +94,7 @@ export const refreshService = async (incomingRefreshToken) => {
     }
 
     let decoded = token.verifyRefreshToken(incomingRefreshToken);
-    console.log("-----userId-------", decoded.sub)
+    console.log("-----userId-------", decoded.sub);
     const userRecord = await userRepository.findUserById(decoded.sub);
     console.log("-------user record-------", userRecord);
 
@@ -150,7 +155,7 @@ export const logoutService = async (refreshTokenFromCookie) => {
         statusCode: StatusCodes.UNAUTHORIZED,
       });
     }
-    console.log("---Logout service--------", decoded)
+    console.log("---Logout service--------", decoded);
     await userRepository.updateUser(decoded.sub, {
       refreshToken: null,
     });
