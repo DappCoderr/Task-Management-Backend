@@ -1,6 +1,6 @@
 import express from "express";
 import cookieParser from "cookie-parser";
-import { CORS_ORIGIN, PORT } from "./config/serverConfig.js";
+import { PORT } from "./config/serverConfig.js";
 import { connectDB } from "./config/database.js";
 import v1Routes from "./routes/v1/index.js";
 import { sequelize } from "./config/database.js";
@@ -17,7 +17,6 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors(corsOptions));
-app.options("*", cors(corsOptions));
 app.use("/api/v1", v1Routes);
 
 app.get("/health", (req, res) => {
