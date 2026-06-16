@@ -1,13 +1,13 @@
 import express from "express";
 import cookieParser from "cookie-parser";
-import { PORT } from "./config/serverConfig.js";
+import { CORS_ORIGIN, PORT } from "./config/serverConfig.js";
 import { connectDB } from "./config/database.js";
 import v1Routes from "./routes/v1/index.js";
 import { sequelize } from "./config/database.js";
 import cors from "cors";
 
 const corsOptions = {
-  origin: 'https://task-manager-frontend-c8fjimboh-dappcoderrs-projects.vercel.app',
+  origin: CORS_ORIGIN,
   credentials: true,
 };
 
