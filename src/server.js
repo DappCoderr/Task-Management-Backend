@@ -6,12 +6,18 @@ import v1Routes from "./routes/v1/index.js";
 import { sequelize } from "./config/database.js";
 import cors from "cors";
 
+const corsOptions = {
+  origin: 'https://task-manager-frontend-c8fjimboh-dappcoderrs-projects.vercel.app',
+  credentials: true,
+};
+
 const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({ origin: CORS_ORIGIN, credentials: true }));
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 app.use("/api/v1", v1Routes);
 
 app.get("/health", (req, res) => {
